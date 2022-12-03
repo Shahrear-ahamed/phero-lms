@@ -2,13 +2,13 @@ const jwt = require("jsonwebtoken");
 
 const verifyToken = (req, res, next) => {
   const fullToken = req.headers.authorization;
-  const token = fullToken.split(" ")[1];
 
-  if (!token) {
+  if (!fullToken) {
     return res
       .status(403)
       .json({ status: "fail", error: "token are not provided" });
   }
+  const token = fullToken?.split(" ")[1];
 
   jwt.verify(token, process.env.TOKEN_KEY, function (err, decoded) {
     if (err) {

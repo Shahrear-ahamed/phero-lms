@@ -6,7 +6,7 @@ const courseSchema = new Schema(
   {
     instractor: {
       name: { type: String, minlength: 0, required: true },
-      id: { type: ObjectId, ref: "Profil" },
+      id: { type: ObjectId, ref: "Profil", required: true },
     },
     publishDate: {
       type: Date,
@@ -60,6 +60,11 @@ const courseSchema = new Schema(
   },
   { timestamps: true }
 );
+
+courseSchema.pre("save", function (next) {
+  this.verified = false;
+  next();
+});
 
 const course = model("Course", courseSchema);
 

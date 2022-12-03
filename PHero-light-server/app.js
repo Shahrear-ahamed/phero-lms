@@ -4,6 +4,8 @@ const app = express();
 
 // route require are here
 const userRouter = require("./routers/user.router");
+const courseRouter = require("./routers/course.router");
+const verifyToken = require("./middlewares/verifyToken");
 
 // middle ware are here
 app.use(express.json());
@@ -11,6 +13,7 @@ app.use(cors());
 
 // router call are here
 app.use("/api/v1/user", userRouter);
+app.use("/api/v1/course", verifyToken, courseRouter);
 
 app.get("/", (req, res) => {
   res
