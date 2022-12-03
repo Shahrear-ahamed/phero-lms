@@ -9,7 +9,7 @@ const userSchema = new Schema(
       type: String,
       minlength: 0,
       trim: true,
-      required: true,
+      required: [true, "Name is required"],
     },
     email: {
       type: String,
@@ -17,13 +17,13 @@ const userSchema = new Schema(
       maxlength: 30,
       unique: true,
       trim: true,
-      required: true,
+      validate: [validator.isEmail, "Provide a valid Email"],
+      required: [true, "Email must be required"],
     },
     mobile: {
       type: Number,
       min: 0,
-      max: 11,
-      required: true,
+      required: [true, "Mobile number require"],
     },
     password: {
       type: String,
@@ -34,6 +34,14 @@ const userSchema = new Schema(
     cPassword: {
       type: String,
     },
+    role: {
+      type: String,
+      enum: {
+        values: ["student", "instructor", "admin"],
+        message: "this {VALUE} role can't be assignable",
+      },
+      default: "student",
+    },
   },
   { timestamps: true }
 );
@@ -43,12 +51,18 @@ userSchema.pre("save", async function (next) {
   try {
     const userPassword = this.password;
 
+    if (!this.cPassword) {
+      throw new Error("Confirm password must be needed");
+    }
+
     if (userPassword === this.cPassword) {
       const saltRounds = await bcrypt.genSalt(10);
       const hashed = await bcrypt.hash(userPassword, saltRounds);
       this.password = hashed;
       this.cPassword = undefined;
       next();
+    } else {
+      throw new Error("Password and confirm password did not match");
     }
   } catch (e) {
     next(e);
@@ -66,7 +80,7 @@ userSchema.methods.jwtToken = function (userData) {
   const data = {
     email: userData?.email,
     role: userData?.role,
-    id: userData?.id,
+    id: userData?._id,
   };
   const token = generateToken(data);
   return token;
