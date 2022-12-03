@@ -3,16 +3,19 @@ const cousreService = {};
 
 // get a single course
 cousreService.getSingleCourse = async (id) => {
-  const course = await Course.findById({ _id: id }).select(
+  return await Course.findById({ _id: id }).select(
     "-createdAt -updatedAt -__v"
   );
-  return course;
 };
 
 // create a new course for student
 cousreService.createCourseService = async (course) => {
-  const result = await Course.create(course);
-  return result;
+  return await Course.create(course);
+};
+
+// delete a course
+cousreService.deleteACourse = async (id) => {
+  return await Course.deleteOne({ _id: id });
 };
 
 module.exports = cousreService;

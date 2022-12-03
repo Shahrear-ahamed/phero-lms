@@ -1,6 +1,7 @@
 const {
   createCourseService,
   getSingleCourse,
+  deleteACourse,
 } = require("../services/course.services");
 const courseController = {};
 
@@ -19,7 +20,6 @@ courseController.getSingleCourse = async (req, res) => {
 };
 
 // create a new course
-
 courseController.createANewCourse = async (req, res) => {
   try {
     const courseResult = await createCourseService(req?.body);
@@ -32,6 +32,24 @@ courseController.createANewCourse = async (req, res) => {
       message: "Ok",
       data: { id: courseResult._id, title: courseResult.title },
     });
+  } catch (err) {
+    res.status(400).json({ status: 400, message: err.message });
+  }
+};
+
+// delete single course
+courseController.deleteCourse = async (req, res) => {
+  try {
+    const id = req?.params?.id;
+    const result = await deleteACourse(id);
+
+    console.log(result);
+
+    if (result?.deletedCount === 0)
+      throw new Error("Can't delete this course");
+
+    // response
+    res.status(200).json({ status: 200, message: "Deleted", data: result });
   } catch (err) {
     res.status(400).json({ status: 400, message: err.message });
   }
