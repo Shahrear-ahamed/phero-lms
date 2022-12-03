@@ -2,6 +2,7 @@ const {
   createCourseService,
   getSingleCourse,
   deleteACourse,
+  updateCourse,
 } = require("../services/course.services");
 const courseController = {};
 
@@ -37,6 +38,27 @@ courseController.createANewCourse = async (req, res) => {
   }
 };
 
+// update a single course
+courseController.updateSingleCourse = async (req, res) => {
+  try {
+    const id = req?.params.id;
+    const data = req?.body;
+
+    const updatedResult = await updateCourse(id, data);
+
+    // thorw an error
+    if (updatedResult?.modifiedCount <= 0)
+      throw new Error("Can't update this course");
+
+    // response
+    res
+      .status(200)
+      .json({ status: 200, message: "Updated", data: updatedResult });
+  } catch (err) {
+    res.status(400).json({ status: 400, message: err.message });
+  }
+};
+
 // delete single course
 courseController.deleteCourse = async (req, res) => {
   try {
@@ -45,8 +67,7 @@ courseController.deleteCourse = async (req, res) => {
 
     console.log(result);
 
-    if (result?.deletedCount === 0)
-      throw new Error("Can't delete this course");
+    if (result?.deletedCount === 0) throw new Error("Can't delete this course");
 
     // response
     res.status(200).json({ status: 200, message: "Deleted", data: result });

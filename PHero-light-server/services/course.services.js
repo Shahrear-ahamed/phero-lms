@@ -13,6 +13,17 @@ cousreService.createCourseService = async (course) => {
   return await Course.create(course);
 };
 
+// update a course
+cousreService.updateCourse = async (_id, updateData) => {
+  const { courseList, ...rest } = updateData;
+
+  return await Course.updateOne(
+    { _id },
+    { $set: rest, $push: { courseList } },
+    { runValidators: true }
+  );
+};
+
 // delete a course
 cousreService.deleteACourse = async (id) => {
   return await Course.deleteOne({ _id: id });

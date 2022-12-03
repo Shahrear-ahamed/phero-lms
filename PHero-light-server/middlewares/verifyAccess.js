@@ -15,7 +15,6 @@ const verifyAccess = (...role) => {
         status: 401,
         message: "You are not authorized for this access",
       });
-
     // next call are here
     next();
   };
