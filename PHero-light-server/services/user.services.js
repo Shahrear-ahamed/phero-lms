@@ -1,3 +1,4 @@
+const Profile = require("../models/Profile");
 const User = require("../models/User");
 const services = {};
 
@@ -9,8 +10,14 @@ services.findAUser = async (email) => {
 
 // create a new use document
 services.userRegisterServices = async (data) => {
+  // create a new user and also create a new profile
   const result = await User.create(data);
-  const { name, role, email, _id } = result || {};
+  const { name, role, email, _id, mobile } = result || {};
+
+  // make a new profile
+  await Profile.create({ name, role, email, mobile });
+
+  // response send and make token
   const token = result.jwtToken({ role, email, _id });
   return { name, role, email, _id, token };
 };
