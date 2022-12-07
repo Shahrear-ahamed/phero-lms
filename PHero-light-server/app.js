@@ -5,6 +5,8 @@ const app = express();
 // route require are here
 const userRouter = require("./routers/user.router");
 const courseRouter = require("./routers/course.router");
+const cartRouter = require("./routers/cart.router");
+const reviewRouter = require("./routers/review.router");
 const verifyToken = require("./middlewares/verifyToken");
 
 // middle ware are here
@@ -13,6 +15,8 @@ app.use(cors());
 
 // router call are here
 app.use("/api/v1/user", userRouter);
+app.use("/api/v1/cart", verifyToken, cartRouter);
+app.use("/api/v1/review", verifyToken, reviewRouter);
 app.use("/api/v1/course", verifyToken, courseRouter);
 
 app.get("/", (req, res) => {

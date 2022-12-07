@@ -1,3 +1,4 @@
+const Cart = require("../models/Cart");
 const Profile = require("../models/Profile");
 const User = require("../models/User");
 const services = {};
@@ -29,7 +30,8 @@ services.userRegisterServices = async (data) => {
   const result = await User.create(data);
   const { name, role, email, _id, mobile } = result || {};
 
-  // make a new profile
+  // make a new profile and cart
+  await Cart.create({ user: { email, id: _id } });
   await Profile.create({ name, role, email, mobile });
 
   // response send and make token
