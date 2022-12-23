@@ -3,6 +3,7 @@ const Cart = require("../models/Cart");
 const cartServices = {};
 
 cartServices.addToCartService = async (email, cartDetails) => {
+  console.log(cartDetails);
   const updateCart = await Cart.updateOne(
     { email },
     { $push: { cartList: cartDetails } }
@@ -12,7 +13,10 @@ cartServices.addToCartService = async (email, cartDetails) => {
 
 cartServices.getCartdetails = async (email) => {
   const cart = await Cart.findOne({ email })
-    .populate("cartList[course]")
+    // .populate({
+    //   path: "cartList.courseId",
+    //   select: "title courseList",
+    // })
     .select("-_id cartList");
   return cart;
 };
