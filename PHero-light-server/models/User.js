@@ -79,6 +79,7 @@ userSchema.methods.verifyUser = function (sendPassword, dbPassword) {
 userSchema.methods.jwtToken = function (userData) {
   const data = {
     email: userData?.email,
+    name: userData?.name,
     role: userData?.role,
     id: userData?._id,
   };

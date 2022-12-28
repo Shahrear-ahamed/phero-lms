@@ -19,7 +19,7 @@ services.findAUser = async (email) => {
 services.userLoginService = async (data) => {
   // find a login user
   const user = await User.findOne({ email: data?.email }).select(
-    "email password role"
+    "email password role name"
   );
   return user;
 };
