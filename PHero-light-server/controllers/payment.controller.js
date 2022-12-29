@@ -1,3 +1,5 @@
+const fetch = require("node-fetch");
+const FormData = require("form-data");
 const PaymentSession = require("ssl-commerz-node").PaymentSession;
 const paymentController = {};
 
@@ -6,80 +8,89 @@ const Cart = require("../models/Cart");
 const Profile = require("../models/Profile");
 
 paymentController.initPayment = async (req, res) => {
-  const userName = req?.user.name;
-  const userEmail = req?.user.email;
+  try {
+    const userName = req?.user.name;
+    const userEmail = req?.user.email;
 
-  // find data from database using models
-  const cart = await Cart.findOne({ userEmail });
+    // find data from database using models
+    const cart = await Cart.findOne({ userEmail });
 
-  const payment = new PaymentSession(
-    true,
-    process.env.SSLCOMMERZ_STORE_ID,
-    process.env.SSLCOMMERZ_STORE_PASSWORD
-  );
+    // transaction id and user card items total amound
+    const userSubId = userName?.slice(0, 5);
+    const transactionId = `${userSubId}_${Math.random()
+      .toString(36)
+      .substr(2, 9)}${new Date().getTime()}`;
 
-  // transaction id and user card items total amound
-  console.log(req?.user);
-  const userSubId = userName?.slice(0, 5);
-  const transactionId = `${userSubId}_${Math.random()
-    .toString(36)
-    .substr(2, 9)}${new Date().getTime()}`;
+    const paymentData = {
+      // store info
+      store_id: process.env.SSLCOMMERZ_STORE_ID,
+      store_passwd: process.env.SSLCOMMERZ_STORE_PASSWORD,
 
-  //   const cartAmount = cart.cartList
-  console.log(cart);
+      // this is for order info
+      total_amount: 100,
+      currency: "BDT",
+      tran_id: transactionId,
+      emi_option: 0,
 
-  // Set the urls
-  payment.setUrls({
-    success: "https:www.yoursite.com/success", // If payment Succeed
-    fail: "https:www.yoursite.com/fail", // If payment failed
-    cancel: "https:www.yoursite.com/cancel", // If user cancel payment
-    ipn: "https:www.yoursite.com/ipn", // SSLCommerz will send http post request in this link
-  });
+      // product profile
+      product_name: "Love",
+      product_profile: "general",
+      product_category: "shoes",
 
-  // Set order details
-  payment.setOrderInfo({
-    total_amount: 1570, // Number field
-    currency: "BDT", // Must be three character string
-    tran_id: transactionId, // Unique Transaction id
-    emi_option: 0, // 1 or 0
-  });
+      // urls for payment session
+      success_url: "http://yoursite.com/success",
+      fail_url: "http://yoursite.com/fail",
+      cancel_url: "http://yoursite.com/cancel",
+      // ipn_url: "https:www.yoursite.com/ipn",
 
-  // Set customer info
-  payment.setCusInfo({
-    name: "Simanta Paul",
-    email: "simanta@bohubrihi.com",
-    add1: "66/A Midtown",
-    add2: "Andarkilla",
-    city: "Chittagong",
-    state: "Optional",
-    postcode: 4000,
-    country: "Bangladesh",
-    phone: "010000000000",
-    fax: "Customer_fax_id",
-  });
+      // customer info
+      cus_name: "Customer Name",
+      cus_email: "cust@yahoo.com",
+      cus_add1: "Dhaka",
+      cus_add2: "Dhaka",
+      cus_city: "Dhaka",
+      cus_state: "Dhaka",
+      cus_postcode: "1000",
+      cus_country: "Bangladesh",
+      cus_phone: "01711111111",
+      cus_fax: "01711111111",
 
-  // Set shipping info
-  payment.setShippingInfo({
-    method: "Courier", //Shipping method of the order. Example: YES or NO or Courier
-    num_item: 2,
-    name: "Simanta Paul",
-    add1: "66/A Midtown",
-    add2: "Andarkilla",
-    city: "Chittagong",
-    state: "Optional",
-    postcode: 4000,
-    country: "Bangladesh",
-  });
+      // shipping info
+      shipping_method: "NO", //Shipping method of the order. Example: YES or NO or Courier
+      num_of_item: 1,
+      ship_name: "Customer Name",
+      ship_add1: "Dhaka",
+      ship_add2: "Dhaka",
+      ship_city: "Dhaka",
+      ship_state: "Dhaka",
+      ship_postcode: "1000",
+      ship_country: "Bangladesh",
+    };
 
-  // Set Product Profile
-  payment.setProductInfo({
-    product_name: "Computer",
-    product_category: "Electronics",
-    product_profile: "general",
-  });
+    const fData = new FormData();
+    for (const key in paymentData) {
+      fData.append(key, paymentData[key]);
+    }
 
-  const response = await payment.paymentInit();
-  res.status(200).send(response);
+    const response = await fetch(
+      `https://sandbox.${process.env.SSL_SESSION_API}`,
+      {
+        method: "POST", // *GET, POST, PUT, DELETE, etc.
+        mode: "cors", // no-cors, cors, *same-origin
+        cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+        credentials: "same-origin", // include, *same-origin, omit
+        redirect: "follow", // manual, *follow, error
+        // referrer: "no-referrer", // no-referrer, *client
+        body: fData,
+      }
+    );
+    const data = await response.json();
+    console.log(data);
+
+    res.status(200).send(data);
+  } catch (err) {
+    res.status(400).json({ status: 400, message: err.message });
+  }
 };
 
 module.exports = paymentController;
