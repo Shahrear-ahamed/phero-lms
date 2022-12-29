@@ -1,12 +1,21 @@
 const fetch = require("node-fetch");
 const FormData = require("form-data");
-const PaymentSession = require("ssl-commerz-node").PaymentSession;
 const paymentController = {};
 
 // models
 const Cart = require("../models/Cart");
 const Profile = require("../models/Profile");
 
+// this is for payment ipn message
+paymentController.ipnMessage = async (req, res) => {
+  try {
+    console.log(req?.body);
+  } catch (err) {
+    res.status(400).json({ status: 400, message: err.message });
+  }
+};
+
+// this is for init a new payment
 paymentController.initPayment = async (req, res) => {
   try {
     const userName = req?.user.name;
