@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const port = process.env.PORT || 5000;
 
 mongoose
-  .connect("mongodb://127.0.0.1:27017/phero-lms")
+  .connect(process.env.SERVER_DB)
   .then(() => console.log("DB is connected"))
   .catch((err) => console.log(`DB connection failed becouse ${err.message}`));
 
