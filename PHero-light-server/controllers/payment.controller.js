@@ -32,6 +32,7 @@ paymentController.ipnMessage = async (req, res) => {
     } else {
       await Order.deleteOne({ transaction_id });
     }
+    await Payment.create(payment);
   } catch (err) {
     res.status(400).json({ status: 400, message: err.message });
   }
