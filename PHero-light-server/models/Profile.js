@@ -3,6 +3,12 @@ const validator = require("validator");
 
 const profileSchema = new Schema(
   {
+    userId: {
+      type: Schema.Types.ObjectId,
+      unique: true,
+      required: true,
+      ref: "User",
+    },
     name: {
       type: String,
       minlength: 0,
@@ -32,10 +38,13 @@ const profileSchema = new Schema(
       default: "student",
     },
     address: {
-      type: String,
-      minlength: 0,
-      maxlength: 255,
-      trim: true,
+      phone: String,
+      address1: String,
+      address2: String,
+      city: String,
+      state: String,
+      postcode: Number,
+      country: String,
     },
     works: [{ company: String, joinDate: String, resignDate: String }],
     skills: [{ type: String, minlength: 0 }],

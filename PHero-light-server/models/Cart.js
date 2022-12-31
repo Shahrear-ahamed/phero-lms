@@ -20,8 +20,8 @@ const cartSchema = new Schema(
       {
         title: { type: String, required: true },
         // image: { type: String, required: false },
-        // price: { type: Number, required: false },
-        courseId: { type: ObjectId, ref: "Course" },
+        price: { type: Number, required: false },
+        courseId: { type: ObjectId, ref: "Course", required: true },
       },
     ],
   },

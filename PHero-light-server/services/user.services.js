@@ -31,8 +31,8 @@ services.userRegisterServices = async (data) => {
   const { name, role, email, _id, mobile } = result || {};
 
   // make a new profile and cart
+  await Profile.create({ name, role, email, mobile, userId: _id });
   await Cart.create({ user: { email, id: _id } });
-  await Profile.create({ name, role, email, mobile });
 
   // response send and make token
   const token = result.jwtToken({ role, email, _id });

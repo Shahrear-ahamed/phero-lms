@@ -3,7 +3,6 @@ const Cart = require("../models/Cart");
 const cartServices = {};
 
 cartServices.addToCartService = async (email, cartDetails) => {
-  console.log(cartDetails);
   const updateCart = await Cart.updateOne(
     { email },
     { $push: { cartList: cartDetails } }

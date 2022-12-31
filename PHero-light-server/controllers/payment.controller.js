@@ -1,15 +1,32 @@
 const fetch = require("node-fetch");
 const FormData = require("form-data");
+const { setOrder } = require("../services/payment.services");
+
+//
 const paymentController = {};
 
 // models
 const Cart = require("../models/Cart");
 const Profile = require("../models/Profile");
+const Order = require("../models/Order");
+const Payment = require("../models/Payment");
+
+// Request a session
+// Payment process
+// Recieve IPN
 
 // this is for payment ipn message
 paymentController.ipnMessage = async (req, res) => {
   try {
-    console.log(req?.body);
+    const payment = req?.body;
+    const transaction_id = payment.transaction_id;
+
+    if (payment?.status === "Valid") {
+      await Order.updateOne({ transaction_id }, { status: "Complete" });
+      await Cart.updateOne({ userId }, { cartList: [] });
+    } else {
+      await Order.deleteOne({ transaction_id });
+    }
   } catch (err) {
     res.status(400).json({ status: 400, message: err.message });
   }
@@ -18,15 +35,14 @@ paymentController.ipnMessage = async (req, res) => {
 // this is for init a new payment
 paymentController.initPayment = async (req, res) => {
   try {
-    const userName = req?.user.name;
-    const userEmail = req?.user.email;
+    const userId = req?.user?.id;
 
     // find data from database using models
-    const cart = await Cart.findOne({ userEmail });
+    const cart = await Cart.findOne({ userId });
+    const profile = await Profile.findOne({ userId });
 
     // transaction id and user card items total amound
-    const userSubId = userName?.slice(0, 5);
-    const transactionId = `${userSubId}_${Math.random()
+    const transactionId = `phl_${Math.random()
       .toString(36)
       .substr(2, 9)}${new Date().getTime()}`;
 
@@ -76,6 +92,7 @@ paymentController.initPayment = async (req, res) => {
       ship_country: "Bangladesh",
     };
 
+    // convert object to formdata
     const fData = new FormData();
     for (const key in paymentData) {
       fData.append(key, paymentData[key]);
@@ -94,7 +111,19 @@ paymentController.initPayment = async (req, res) => {
       }
     );
     const data = await response.json();
-    console.log(data);
+
+    // if payment init is success then we can store our payment in order
+    if (data.status === "SUCCESS") {
+      const order = {
+        cartList: cart.cartList,
+        transaction_id: transactionId,
+        user: userId,
+        address: profile?.address,
+        sessionKey: data?.sessionkey,
+      };
+
+      await setOrder(order);
+    }
 
     res.status(200).send(data);
   } catch (err) {
