@@ -75,7 +75,8 @@ paymentController.initPayment = async (req, res) => {
       success_url: "http://yoursite.com/success",
       fail_url: "http://yoursite.com/fail",
       cancel_url: "http://yoursite.com/cancel",
-      ipn_url: "https://phero-light.vercel.app/api/v1/payment/ipn",
+      // ipn_url: "https://phero-light.vercel.app/api/v1/payment/ipn",
+      ipn_url: "https://phero-lms.onrender.com/api/v1/payment/ipn",
 
       // customer info
       cus_name: "Customer Name",
