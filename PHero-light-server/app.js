@@ -1,6 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const app = express();
+const compression = require("compression");
 
 // route require are here
 const userRouter = require("./routers/user.router");
@@ -14,6 +15,7 @@ const verifyToken = require("./middlewares/verifyToken");
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
+app.use(compression());
 
 // router call are here
 app.use("/api/v1/user", userRouter);

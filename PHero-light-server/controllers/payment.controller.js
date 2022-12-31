@@ -33,6 +33,9 @@ paymentController.ipnMessage = async (req, res) => {
       await Order.deleteOne({ transaction_id });
     }
     await Payment.create(payment);
+
+    // send response
+    res.status(200).send("IPN");
   } catch (err) {
     res.status(400).json({ status: 400, message: err.message });
   }

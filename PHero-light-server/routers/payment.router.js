@@ -7,7 +7,11 @@ const verifyAccess = require("../middlewares/verifyAccess");
 
 router
   .route("/")
-  .get(verifyAccess("admin", "student", "instructor"), initPayment);
+  .get(verifyAccess("admin", "student", "instructor"), initPayment)
+  // .post(async (req, res) => {
+  //   console.log(req?.body);
+  //   res.status(200).send(req?.body);
+  // });
 
 router.route("/ipn").post(ipnMessage);
 
