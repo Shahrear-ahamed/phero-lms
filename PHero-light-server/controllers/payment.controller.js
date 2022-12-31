@@ -19,20 +19,20 @@ const Payment = require("../models/Payment");
 paymentController.ipnMessage = async (req, res) => {
   try {
     const payment = req?.body;
-    const transaction_id = payment.transaction_id;
-    console.log(req?.body);
+    // const transaction_id = payment.transaction_id;
+    // console.log(req?.body);
 
-    if (payment?.status === "VALID") {
-      const orderSt = await Order.updateOne(
-        { transaction_id },
-        { status: "Complete" }
-      );
-      const cartS = await Cart.updateOne({ userId }, { cartList: [] });
-      console.log(orderSt, cartS);
-    } else {
-      await Order.deleteOne({ transaction_id });
-    }
-    await Payment.create(payment);
+    // if (payment?.status === "VALID") {
+    //   const orderSt = await Order.updateOne(
+    //     { transaction_id },
+    //     { status: "Complete" }
+    //   );
+    //   const cartS = await Cart.updateOne({ userId }, { cartList: [] });
+    //   console.log(orderSt, cartS);
+    // } else {
+    //   await Order.deleteOne({ transaction_id });
+    // }
+    await Payment.create(req?.body);
 
     // send response
     res.status(200).send("IPN");
@@ -72,10 +72,15 @@ paymentController.initPayment = async (req, res) => {
       product_category: "shoes",
 
       // urls for payment session
-      success_url: "http://yoursite.com/success",
-      fail_url: "http://yoursite.com/fail",
-      cancel_url: "http://yoursite.com/cancel",
+      // success_url: "http://yoursite.com/success",
+      // fail_url: "http://yoursite.com/fail",
+      // cancel_url: "http://yoursite.com/cancel",
       // ipn_url: "https://phero-light.vercel.app/api/v1/payment/ipn",
+
+      // render
+      success_url: "https://phero-lms.onrender.com/api/v1/success",
+      fail_url: "https://phero-lms.onrender.com/api/v1/fail",
+      cancel_url: "https://phero-lms.onrender.com/api/v1/cancel",
       ipn_url: "https://phero-lms.onrender.com/api/v1/payment/ipn",
 
       // customer info

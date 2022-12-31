@@ -12,8 +12,8 @@ const paymentRouter = require("./routers/payment.router");
 const verifyToken = require("./middlewares/verifyToken");
 
 // middle ware are here
-app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 app.use(cors());
 app.use(compression());
 
