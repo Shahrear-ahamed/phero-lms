@@ -21,9 +21,15 @@ paymentController.ipnMessage = async (req, res) => {
     const payment = req?.body;
     const transaction_id = payment.transaction_id;
 
+    console.log(payment);
+
     if (payment?.status === "Valid") {
-      await Order.updateOne({ transaction_id }, { status: "Complete" });
-      await Cart.updateOne({ userId }, { cartList: [] });
+      const orderSt = await Order.updateOne(
+        { transaction_id },
+        { status: "Complete" }
+      );
+      const cartS = await Cart.updateOne({ userId }, { cartList: [] });
+      console.log(orderSt, cartS);
     } else {
       await Order.deleteOne({ transaction_id });
     }
