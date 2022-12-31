@@ -4,10 +4,15 @@ const {
   ipnMessage,
 } = require("../controllers/payment.controller");
 const verifyAccess = require("../middlewares/verifyAccess");
+const verifyToken = require("../middlewares/verifyToken");
 
 router
   .route("/")
-  .get(verifyAccess("admin", "student", "instructor"), initPayment);
+  .get(
+    verifyToken,
+    verifyAccess("admin", "student", "instructor"),
+    initPayment
+  );
 
 router.route("/ipn").post(ipnMessage);
 
