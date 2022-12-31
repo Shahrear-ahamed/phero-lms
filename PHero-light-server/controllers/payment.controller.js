@@ -19,14 +19,14 @@ const Payment = require("../models/Payment");
 paymentController.ipnMessage = async (req, res) => {
   try {
     const payment = req?.body;
-    const transaction_id = payment.transaction_id;
+    const transaction_id = payment?.tran_id;
 
     if (payment?.status === "VALID") {
-      await Order.updateOne(
+      const order = await Order.updateOne(
         { transaction_id },
         { status: "Complete" }
       );
-      await Cart.updateOne({ userId }, { cartList: [] });
+      await Cart.updateOne({ userId: order?.user }, { cartList: [] });
     } else {
       await Order.deleteOne({ transaction_id });
     }
