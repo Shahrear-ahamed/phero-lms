@@ -2,7 +2,8 @@ const Order = require("../models/Payment");
 const paymentServices = {};
 
 paymentServices.setOrder = async (orderInfo) => {
-  await Order.create(orderInfo);
+  const order = await Order.create(orderInfo);
+  console.log(order);
 };
 
 module.exports = paymentServices;
