@@ -10,7 +10,6 @@ cartController.addToCart = async (req, res) => {
     const cartDetails = req?.body;
 
     const createdCart = await addToCartService(email, cartDetails);
-    console.log(createdCart);
 
     if (createdCart.modifiedCount !== 1) {
       throw new Error("Can't add to cart");

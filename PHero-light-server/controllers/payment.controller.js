@@ -20,6 +20,7 @@ paymentController.ipnMessage = async (req, res) => {
   try {
     const payment = req?.body;
     const transaction_id = payment.transaction_id;
+    console.log(req?.body);
 
     if (payment?.status === "VALID") {
       const orderSt = await Order.updateOne(

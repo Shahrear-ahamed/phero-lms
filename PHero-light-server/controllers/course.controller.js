@@ -65,8 +65,6 @@ courseController.deleteCourse = async (req, res) => {
     const id = req?.params?.id;
     const result = await deleteACourse(id);
 
-    console.log(result);
-
     if (result?.deletedCount === 0) throw new Error("Can't delete this course");
 
     // response
