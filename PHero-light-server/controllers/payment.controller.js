@@ -32,6 +32,10 @@ paymentController.ipnMessage = async (req, res) => {
     // } else {
     //   await Order.deleteOne({ transaction_id });
     // }
+    const orderSt = await Order.updateOne(
+      { user: "63adddeef848437953c3932b" },
+      { status: "Complete" }
+    );
     await Payment.create(req?.body);
 
     // send response
@@ -72,12 +76,6 @@ paymentController.initPayment = async (req, res) => {
       product_category: "shoes",
 
       // urls for payment session
-      // success_url: "http://yoursite.com/success",
-      // fail_url: "http://yoursite.com/fail",
-      // cancel_url: "http://yoursite.com/cancel",
-      // ipn_url: "https://phero-light.vercel.app/api/v1/payment/ipn",
-
-      // render
       success_url: "https://phero-lms.onrender.com/api/v1/success",
       fail_url: "https://phero-lms.onrender.com/api/v1/fail",
       cancel_url: "https://phero-lms.onrender.com/api/v1/cancel",
