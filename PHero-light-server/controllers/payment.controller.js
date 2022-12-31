@@ -19,24 +19,18 @@ const Payment = require("../models/Payment");
 paymentController.ipnMessage = async (req, res) => {
   try {
     const payment = req?.body;
-    // const transaction_id = payment.transaction_id;
-    // console.log(req?.body);
+    const transaction_id = payment.transaction_id;
 
-    // if (payment?.status === "VALID") {
-    //   const orderSt = await Order.updateOne(
-    //     { transaction_id },
-    //     { status: "Complete" }
-    //   );
-    //   const cartS = await Cart.updateOne({ userId }, { cartList: [] });
-    //   console.log(orderSt, cartS);
-    // } else {
-    //   await Order.deleteOne({ transaction_id });
-    // }
-    const orderSt = await Order.updateOne(
-      { user: "63adddeef848437953c3932b" },
-      { status: "Complete" }
-    );
-    await Payment.create(req?.body);
+    if (payment?.status === "VALID") {
+      await Order.updateOne(
+        { transaction_id },
+        { status: "Complete" }
+      );
+      await Cart.updateOne({ userId }, { cartList: [] });
+    } else {
+      await Order.deleteOne({ transaction_id });
+    }
+    await Payment.create(payment);
 
     // send response
     res.status(200).send("IPN");
