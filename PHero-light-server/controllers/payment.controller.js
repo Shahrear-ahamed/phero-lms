@@ -32,11 +32,14 @@ paymentController.ipnMessage = async (req, res) => {
       // add course in purchased curses
       await PurchasedCourse.updateOne(
         { userId: order?.user },
-        { $push: { courseList: carts?.courseList } }
+        { $push: { courseList: carts?.cartList } }
       );
 
       // update and remove user cart
-      await Cart.updateOne({ userId: order?.user }, { cartList: [] });
+      await Cart.updateOne(
+        { userId: order?.user },
+        { $push: { cartList: [] } }
+      );
     } else {
       // if payment is failed then delete this order
       await Order.deleteOne({ transaction_id });
