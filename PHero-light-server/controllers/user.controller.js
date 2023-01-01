@@ -6,10 +6,11 @@ const {
 } = require("../services/user.services");
 const controller = {};
 
+// user details
 controller.singleUserController = async (req, res) => {
   try {
-    const userData = req?.user;
-    const user = await findUserDetailService(userData?.email);
+    const userId = req?.user?.id;
+    const user = await findUserDetailService(userId);
 
     if (!user) throw new Error("user not found by this email");
 

@@ -10,6 +10,7 @@ const Cart = require("../models/Cart");
 const Profile = require("../models/Profile");
 const Order = require("../models/Order");
 const Payment = require("../models/Payment");
+const PurchasedCourse = require("../models/Purchased_course");
 
 // Request a session
 // Payment process
@@ -26,10 +27,22 @@ paymentController.ipnMessage = async (req, res) => {
         { transaction_id },
         { status: "Complete" }
       );
+      const carts = await Cart.findOne({ userId: order?.user });
+
+      // add course in purchased curses
+      await PurchasedCourse.updateOne(
+        { userId: order?.user },
+        { $push: { courseList: carts?.courseList } }
+      );
+
+      // update and remove user cart
       await Cart.updateOne({ userId: order?.user }, { cartList: [] });
     } else {
+      // if payment is failed then delete this order
       await Order.deleteOne({ transaction_id });
     }
+
+    // payment are save here is valid or faild or cencel
     await Payment.create(payment);
 
     // send response
@@ -59,7 +72,7 @@ paymentController.initPayment = async (req, res) => {
       store_passwd: process.env.SSLCOMMERZ_STORE_PASSWORD,
 
       // this is for order info
-      total_amount: 100,
+      total_amount: 999,
       currency: "BDT",
       tran_id: transactionId,
       emi_option: 0,

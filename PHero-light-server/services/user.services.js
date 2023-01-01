@@ -1,12 +1,19 @@
 const Cart = require("../models/Cart");
 const Profile = require("../models/Profile");
 const User = require("../models/User");
+const PurchasedCourse = require("../models/Purchased_course");
 const services = {};
 
 // get details from document for a user
-services.findUserDetailService = async (email) => {
-  const user = await Profile.findOne({ email });
-  return user;
+services.findUserDetailService = async (userId) => {
+  const user = await Profile.findOne({ userId }).select(
+    "-_id -createdAt -updatedAt -__v"
+  );
+  const courses = await PurchasedCourse.findOne({ userId }).select(
+    "-_id courseList"
+  );
+
+  return { ...user.toObject(), ...courses.toObject() };
 };
 
 // findA user from document
@@ -33,6 +40,7 @@ services.userRegisterServices = async (data) => {
   // make a new profile and cart
   await Profile.create({ name, role, email, mobile, userId: _id });
   await Cart.create({ userId: _id });
+  await PurchasedCourse.create({ userId: _id });
 
   // response send and make token
   const token = result.jwtToken({ role, email, _id });
