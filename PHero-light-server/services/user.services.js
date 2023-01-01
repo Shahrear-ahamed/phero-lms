@@ -32,7 +32,7 @@ services.userRegisterServices = async (data) => {
 
   // make a new profile and cart
   await Profile.create({ name, role, email, mobile, userId: _id });
-  await Cart.create({ user: { email, id: _id } });
+  await Cart.create({ userId: _id });
 
   // response send and make token
   const token = result.jwtToken({ role, email, _id });

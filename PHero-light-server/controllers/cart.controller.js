@@ -6,10 +6,10 @@ const cartController = {};
 
 cartController.addToCart = async (req, res) => {
   try {
-    const email = req?.user?.email;
+    const userId = req?.user?.id;
     const cartDetails = req?.body;
 
-    const createdCart = await addToCartService(email, cartDetails);
+    const createdCart = await addToCartService(userId, cartDetails);
 
     if (createdCart.modifiedCount !== 1) {
       throw new Error("Can't add to cart");
@@ -23,9 +23,9 @@ cartController.addToCart = async (req, res) => {
 
 cartController.getCart = async (req, res) => {
   try {
-    const userEmail = req?.user?.email;
+    const userId = req?.user?.id;
 
-    const cartDetails = await getCartdetails(userEmail);
+    const cartDetails = await getCartdetails(userId);
 
     res.status(200).json({ status: 200, message: "Ok", cartDetails });
   } catch (err) {

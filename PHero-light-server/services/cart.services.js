@@ -2,21 +2,21 @@ const Cart = require("../models/Cart");
 
 const cartServices = {};
 
-cartServices.addToCartService = async (email, cartDetails) => {
+cartServices.addToCartService = async (userId, cartDetails) => {
   const updateCart = await Cart.updateOne(
-    { email },
+    { userId },
     { $push: { cartList: cartDetails } }
   );
   return updateCart;
 };
 
-cartServices.getCartdetails = async (email) => {
-  const cart = await Cart.findOne({ email })
+cartServices.getCartdetails = async (userId) => {
+  const cart = await Cart.findOne({ userId })
     // .populate({
     //   path: "cartList.courseId",
     //   select: "title courseList",
     // })
-    .select("-_id cartList");
+    .select("-_id userId cartList");
   return cart;
 };
 
