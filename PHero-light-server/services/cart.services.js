@@ -12,10 +12,10 @@ cartServices.addToCartService = async (userId, cartDetails) => {
 
 cartServices.getCartdetails = async (userId) => {
   const cart = await Cart.findOne({ userId })
-    // .populate({
-    //   path: "cartList.courseId",
-    //   select: "title courseList",
-    // })
+    .populate({
+      path: "cartList.courseId",
+      select: "title price",
+    })
     .select("userId cartList");
   return cart;
 };

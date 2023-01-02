@@ -12,6 +12,13 @@ const courseSchema = new Schema(
       type: Date,
       default: Date.now,
     },
+    thumbnail: {
+      type: String,
+      required: true,
+      unique: true,
+      minlength: 0,
+      maxlength: 255,
+    },
     title: {
       type: String,
       minlength: 0,
@@ -29,6 +36,21 @@ const courseSchema = new Schema(
         values: ["true", "false"],
         message: "",
         default: "false",
+      },
+    },
+    price: {
+      type: Number,
+      default: 0,
+      min: 0,
+      max: 99999,
+      required: true,
+    },
+    status: {
+      type: String,
+      enum: {
+        values: ["In Review", "Active", "Free"],
+        message: "this course is {VALUE}",
+        default: "In Review",
       },
     },
     courseList: [

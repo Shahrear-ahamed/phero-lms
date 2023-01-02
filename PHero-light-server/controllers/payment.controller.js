@@ -23,7 +23,7 @@ paymentController.ipnMessage = async (req, res) => {
     const transaction_id = payment?.tran_id;
 
     if (payment?.status === "VALID") {
-      const order = await Order.updateOne(
+      const order = await Order.findOneAndUpdate(
         { transaction_id },
         { status: "Complete" }
       );
