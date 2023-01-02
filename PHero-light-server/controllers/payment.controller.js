@@ -36,10 +36,7 @@ paymentController.ipnMessage = async (req, res) => {
       );
 
       // update and remove user cart
-      await Cart.updateOne(
-        { userId: order?.user },
-        { $push: { cartList: [] } }
-      );
+      await Cart.updateOne({ userId: order?.user }, { cartList: [] });
     } else {
       // if payment is failed then delete this order
       await Order.deleteOne({ transaction_id });

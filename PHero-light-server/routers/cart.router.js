@@ -1,10 +1,17 @@
 const verifyAccess = require("../middlewares/verifyAccess");
-const { addToCart, getCart } = require("../controllers/cart.controller");
+const {
+  addToCart,
+  getCart,
+  deleteCartItem,
+} = require("../controllers/cart.controller");
 
 const router = require("express").Router();
 
 router
   .route("/")
-  .post(verifyAccess("admin", "student", "instructor"), addToCart)
-  .get(verifyAccess("admin", "student", "instructor"), getCart);
+  .get(verifyAccess("admin", "student", "instructor"), getCart)
+  .put(verifyAccess("admin", "student", "instructor"), addToCart);
+router
+  .route("/:id")
+  .delete(verifyAccess("admin", "student", "instructor"), deleteCartItem);
 module.exports = router;

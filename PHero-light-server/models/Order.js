@@ -14,7 +14,6 @@ const orderSchema = new Schema({
   user: {
     type: ObjectId,
     required: true,
-    unique: true,
     ref: "User",
   },
   address: {
