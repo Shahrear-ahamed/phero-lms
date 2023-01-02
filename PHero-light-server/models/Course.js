@@ -85,6 +85,7 @@ const courseSchema = new Schema(
 
 courseSchema.pre("save", function (next) {
   this.verified = false;
+  this.status = "In Review";
   next();
 });
 
