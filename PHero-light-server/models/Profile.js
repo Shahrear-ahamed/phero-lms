@@ -38,7 +38,6 @@ const profileSchema = new Schema(
       default: "student",
     },
     address: {
-      phone: String,
       address1: String,
       address2: String,
       city: String,
@@ -55,6 +54,11 @@ const profileSchema = new Schema(
   },
   { timestamps: true }
 );
+
+profileSchema.pre("save", async function (next) {
+  this.role = "student";
+  next();
+});
 
 const profile = model("Profile", profileSchema);
 

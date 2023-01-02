@@ -39,7 +39,6 @@ cartController.deleteCartItem = async (req, res) => {
   try {
     const id = req?.params.id;
     const userId = req?.user?.id;
-    console.log(id);
 
     const deleteCart = await deleteCartitemService(userId, id);
 

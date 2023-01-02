@@ -58,13 +58,24 @@ paymentController.initPayment = async (req, res) => {
     const userId = req?.user?.id;
 
     // find data from database using models
-    const cart = await Cart.findOne({ userId });
     const profile = await Profile.findOne({ userId });
+    const cart = await Cart.findOne({ userId })
+      .populate({
+        path: "cartList.courseId",
+        select: "title thumbnail price",
+      })
+      .select("userId cartList");
 
     // transaction id and user card items total amound
     const transactionId = `phl_${Math.random()
       .toString(36)
       .substr(2, 9)}${new Date().getTime()}`;
+
+    const courseAmount = cart?.cartList
+      .map((c) => c.courseId?.price)
+      .reduce((a, b) => a + b, 0);
+
+    const productNames = cart?.cartList.map((c) => c.title).join(" ,");
 
     const paymentData = {
       // store info
@@ -72,15 +83,15 @@ paymentController.initPayment = async (req, res) => {
       store_passwd: process.env.SSLCOMMERZ_STORE_PASSWORD,
 
       // this is for order info
-      total_amount: 999,
+      total_amount: courseAmount,
       currency: "BDT",
       tran_id: transactionId,
       emi_option: 0,
 
       // product profile
-      product_name: "Love",
-      product_profile: "general",
-      product_category: "shoes",
+      product_name: productNames,
+      product_category: "digital-product",
+      product_profile: "non-physical-goods",
 
       // urls for payment session
       success_url: "https://phero-lms.onrender.com/api/v1/success",
@@ -89,27 +100,18 @@ paymentController.initPayment = async (req, res) => {
       ipn_url: "https://phero-lms.onrender.com/api/v1/payment/ipn",
 
       // customer info
-      cus_name: "Customer Name",
-      cus_email: "cust@yahoo.com",
-      cus_add1: "Dhaka",
-      cus_add2: "Dhaka",
-      cus_city: "Dhaka",
-      cus_state: "Dhaka",
-      cus_postcode: "1000",
-      cus_country: "Bangladesh",
-      cus_phone: "01711111111",
-      cus_fax: "01711111111",
+      cus_name: profile?.name,
+      cus_email: profile?.email,
+      cus_add1: profile?.address?.address1,
+      cus_add2: profile?.address?.address2,
+      cus_city: profile?.address?.city,
+      cus_state: profile?.address?.state,
+      cus_postcode: profile?.address?.postcode,
+      cus_country: profile?.address?.country,
+      cus_phone: profile?.mobile,
 
       // shipping info
       shipping_method: "NO", //Shipping method of the order. Example: YES or NO or Courier
-      num_of_item: 1,
-      ship_name: "Customer Name",
-      ship_add1: "Dhaka",
-      ship_add2: "Dhaka",
-      ship_city: "Dhaka",
-      ship_state: "Dhaka",
-      ship_postcode: "1000",
-      ship_country: "Bangladesh",
     };
 
     // convert object to formdata

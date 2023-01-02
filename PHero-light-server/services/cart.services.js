@@ -14,9 +14,10 @@ cartServices.getCartdetails = async (userId) => {
   const cart = await Cart.findOne({ userId })
     .populate({
       path: "cartList.courseId",
-      select: "title price",
+      select: "title thumbnail price",
     })
     .select("userId cartList");
+  
   return cart;
 };
 
